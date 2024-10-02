@@ -35,7 +35,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 	
 	local pos: Vector3, rot: Vector3;
 	
-	function mt.__index(_, k: string): Attachment | AlignPosition | AlignOrientation | BasePart | CFrame | Vector3
+	function mt.__index(_: AssemblyProxy, k: string): Attachment | AlignPosition | AlignOrientation | BasePart | CFrame | Vector3
 		if k == "BasePart" then
 			return root;
 		elseif k == "CFrame" then
@@ -51,7 +51,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 		return mt[k]
 	end
 	
-	function mt.__newindex(_, k: string, v: CFrame | Vector3): ()
+	function mt.__newindex(_: AssemblyProxy, k: string, v: CFrame | Vector3): ()
 		local t = typeof(v);
 		
 		if t ~= "CFrame" and t ~= "Vector3" then return end
@@ -72,7 +72,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 			mt.AlignPosition.Enabled = true;
 			mt.AlignOrientation.Enabled = true;
 		elseif k == "Position" then
-			mt.AlignPosition.Position = v::Vector3;
+			mt.AlignPosition.Position = t == "Vector3" and v::Vector3 or t == "CFrame" and (v::CFrame).Position;
 			mt.AlignPosition.Enabled = true;
 		elseif k == "Orientation" then
 			mt.AlignOrientation.CFrame = t == "CFrame" and v::CFrame or t == "Vector3" and v::Vector3;
