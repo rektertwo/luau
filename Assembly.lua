@@ -51,6 +51,27 @@ local function Assembly(root: BasePart): AssemblyProxy
 		return mt[k];
 	end
 	
+	local a0 = Instance.new("Attachment");
+	
+	a0.Name = "Assembly";
+	a0.Parent = root;
+	
+	local ap = Instance.new("AlignPosition");
+	
+	ap.Enabled = false;
+	ap.RigidityEnabled = true;
+	ap.Mode = Enum.PositionAlignmentMode.OneAttachment;
+	ap.Attachment0 = mt.Attachment;
+	ap.Parent = mt.Attachment;
+	
+	local ao = Instance.new("AlignOrientation");
+	
+	ao.Enabled = false;
+	ao.RigidityEnabled = true;
+	ao.Mode = Enum.OrientationAlignmentMode.OneAttachment;
+	ao.Attachment0 = mt.Attachment;
+	ao.Parent = mt.Attachment;
+	
 	function mt.__newindex(_, k, v)
 		local t = typeof(v);
 		
@@ -60,45 +81,31 @@ local function Assembly(root: BasePart): AssemblyProxy
 			if t == "CFrame" then
 				pos = v.Position;
 				rot = Vector3.new(v:ToOrientation());
-				mt.AlignPosition.Position = pos;
-				mt.AlignOrientation.CFrame = v;
+				ap.Position = pos;
+				ao.CFrame = v;
 			else
 				pos = v;
 				rot = Vector3.zero;
-				mt.AlignPosition.Position = v;
-				mt.AlignOrientation = CFrame.identity;
+				ap.Position = v;
+				ao = CFrame.identity;
 			end
 			
-			mt.AlignPosition.Enabled = true;
-			mt.AlignOrientation.Enabled = true;
+			ap.Enabled = true;
+			ao.Enabled = true;
 		elseif k == "Position" then
-			mt.AlignPosition.Position = t == "Vector3" and v or t == "CFrame" and v.Position;
-			mt.AlignPosition.Enabled = true;
+			ap.Position = t == "Vector3" and v or t == "CFrame" and v.Position;
+			ap.Enabled = true;
 		elseif k == "Orientation" then
-			mt.AlignOrientation.CFrame = t == "CFrame" and v or t == "Vector3" and v;
-			mt.AlignOrientation.Enabled = true;
+			ao.CFrame = t == "CFrame" and v or t == "Vector3" and v;
+			ao.Enabled = true;
 		end
 	end
 	
-	mt.Attachment = Instance.new("Attachment");
-	mt.AlignPosition = Instance.new("AlignPosition");
-	mt.AlignOrientation = Instance.new("AlignOrientation");
+	mt.Attachment = a0;
+	mt.AlignPosition = ap;
+	mt.AlignOrientation = ao;
 	
 	table.freeze(mt);
-	mt.Attachment.Name = "Assembly";
-	mt.Attachment.Parent = root;
-	
-	mt.AlignPosition.Enabled = false;
-	mt.AlignPosition.RigidityEnabled = true;
-	mt.AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment;
-	mt.AlignPosition.Attachment0 = mt.Attachment;
-	mt.AlignPosition.Parent = mt.Attachment;
-	
-	mt.AlignOrientation.Enabled = false;
-	mt.AlignOrientation.RigidityEnabled = true;
-	mt.AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment;
-	mt.AlignOrientation.Attachment0 = mt.Attachment;
-	mt.AlignOrientation.Parent = mt.Attachment;
 	return ud;
 end
 
