@@ -1,8 +1,8 @@
 export type AssemblyProxy = {
+	BasePart: BasePart;
 	Attachment: Attachment;
 	AlignPosition: AlignPosition;
 	AlignOrientation: AlignOrientation;
-	BasePart: BasePart;
 	CFrame: CFrame;
 	Position: Vector3;
 	Orientation: Vector3;
@@ -14,13 +14,13 @@ if not _G.AssemblyRegistry then
 end
 
 local function Assembly(root: BasePart): AssemblyProxy
-	for k: AssemblyProxy, v: BasePart in next, _G.AssemblyRegistry do
+	for k, v in next, _G.AssemblyRegistry do
 		if v ~= root then continue end
 		
 		return k;
 	end
 	
-	local ud: AssemblyProxy = newproxy(true);
+	local ud = newproxy(true);
 	
 	_G.AssemblyRegistry[ud] = root;
 	
@@ -33,9 +33,9 @@ local function Assembly(root: BasePart): AssemblyProxy
 		self = nil;
 	end
 	
-	local pos: Vector3, rot: Vector3;
+	local pos, rot;
 	
-	function mt.__index(_: AssemblyProxy, k: string): Attachment | AlignPosition | AlignOrientation | BasePart | CFrame | Vector3
+	function mt.__index(_, k)
 		if k == "BasePart" then
 			return root;
 		elseif k == "CFrame" then
@@ -48,34 +48,34 @@ local function Assembly(root: BasePart): AssemblyProxy
 			return rot or root.Orientation;
 		end
 		
-		return mt[k]
+		return mt[k];
 	end
 	
-	function mt.__newindex(_: AssemblyProxy, k: string, v: CFrame | Vector3): ()
+	function mt.__newindex(_, k, v)
 		local t = typeof(v);
 		
 		if t ~= "CFrame" and t ~= "Vector3" then return end
 		
 		if k == "CFrame" then
 			if t == "CFrame" then
-				pos = (v::CFrame).Position;
-				rot = Vector3.new((v::CFrame):ToOrientation());
+				pos = v.Position;
+				rot = Vector3.new(v:ToOrientation());
 				mt.AlignPosition.Position = pos;
-				mt.AlignOrientation.CFrame = v::CFrame;
+				mt.AlignOrientation.CFrame = v;
 			else
-				pos = v::Vector3;
+				pos = v;
 				rot = Vector3.zero;
-				mt.AlignPosition.Position = v::Vector3;
+				mt.AlignPosition.Position = v;
 				mt.AlignOrientation = CFrame.identity;
 			end
 			
 			mt.AlignPosition.Enabled = true;
 			mt.AlignOrientation.Enabled = true;
 		elseif k == "Position" then
-			mt.AlignPosition.Position = t == "Vector3" and v::Vector3 or t == "CFrame" and (v::CFrame).Position;
+			mt.AlignPosition.Position = t == "Vector3" and v or t == "CFrame" and v.Position;
 			mt.AlignPosition.Enabled = true;
 		elseif k == "Orientation" then
-			mt.AlignOrientation.CFrame = t == "CFrame" and v::CFrame or t == "Vector3" and v::Vector3;
+			mt.AlignOrientation.CFrame = t == "CFrame" and v or t == "Vector3" and v;
 			mt.AlignOrientation.Enabled = true;
 		end
 	end
