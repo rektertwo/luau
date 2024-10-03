@@ -83,14 +83,17 @@ local function Assembly(root: BasePart): AssemblyProxy
 	mt.Attachment = Instance.new("Attachment");
 	mt.AlignPosition = Instance.new("AlignPosition");
 	mt.AlignOrientation = Instance.new("AlignOrientation");
+	
 	table.freeze(mt);
 	mt.Attachment.Name = "Assembly";
 	mt.Attachment.Parent = root;
+	
 	mt.AlignPosition.Enabled = false;
 	mt.AlignPosition.RigidityEnabled = true;
 	mt.AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment;
 	mt.AlignPosition.Attachment0 = mt.Attachment;
 	mt.AlignPosition.Parent = mt.Attachment;
+	
 	mt.AlignOrientation.Enabled = false;
 	mt.AlignOrientation.RigidityEnabled = true;
 	mt.AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment;
