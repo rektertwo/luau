@@ -25,14 +25,6 @@ local function Assembly(root: BasePart): AssemblyProxy
 	_G.AssemblyRegistry[ud] = root;
 	
 	local mt = getmetatable(ud);
-	
-	function mt:Drop()
-		mt.Attachment:Destroy();
-		mt = nil;
-		_G.AssemblyRegistry[self] = nil;
-		self = nil;
-	end
-	
 	local pos, rot;
 	
 	function mt.__index(_, k)
@@ -61,16 +53,20 @@ local function Assembly(root: BasePart): AssemblyProxy
 	ap.Enabled = false;
 	ap.RigidityEnabled = true;
 	ap.Mode = Enum.PositionAlignmentMode.OneAttachment;
-	ap.Attachment0 = mt.Attachment;
-	ap.Parent = mt.Attachment;
+	ap.Attachment0 = a0;
+	ap.Parent = a0;
 	
 	local ao = Instance.new("AlignOrientation");
 	
 	ao.Enabled = false;
 	ao.RigidityEnabled = true;
 	ao.Mode = Enum.OrientationAlignmentMode.OneAttachment;
-	ao.Attachment0 = mt.Attachment;
-	ao.Parent = mt.Attachment;
+	ao.Attachment0 = a0;
+	ao.Parent = a0;
+	
+	mt.Attachment = a0;
+	mt.AlignPosition = ap;
+	mt.AlignOrientation = ao;
 	
 	function mt.__newindex(_, k, v)
 		local t = typeof(v);
@@ -101,9 +97,12 @@ local function Assembly(root: BasePart): AssemblyProxy
 		end
 	end
 	
-	mt.Attachment = a0;
-	mt.AlignPosition = ap;
-	mt.AlignOrientation = ao;
+	function mt:Drop()
+		mt = nil;
+		_G.AssemblyRegistry[self] = nil;
+		self = nil;
+		a0:Destroy();
+	end
 	
 	table.freeze(mt);
 	return ud;
