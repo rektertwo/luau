@@ -83,7 +83,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 				pos = v;
 				rot = Vector3.zero;
 				ap.Position = v;
-				ao = CFrame.identity;
+				ao.CFrame = CFrame.identity;
 			end
 			
 			ap.Enabled = true;
