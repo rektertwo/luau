@@ -91,7 +91,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 			ap.Enabled = true;
 			ao.Enabled = true;
 		elseif k == "Position" then
-			ap.Position = if t == "Vector3" then v else v.Position;
+			ap.Position = if t == "CFrame" then v.Position else v;
 			ap.Enabled = true;
 		elseif k == "Orientation" then
 			if t == "CFrame" then
@@ -111,6 +111,9 @@ local function Assembly(root: BasePart): AssemblyProxy
 		_G.AssemblyRegistry[self] = nil;
 		self = nil;
 		a0:Destroy();
+		a0 = nil;
+		ap = nil;
+		ao = nil;
 	end
 	
 	table.freeze(mt);
