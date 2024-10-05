@@ -31,7 +31,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 		if k == "BasePart" then
 			return root;
 		elseif k == "CFrame" then
-			local rot = rot or root.Orientation * (math.pi / 180);
+			local rot = rot or math.pi / 180 * root.Orientation;
 			
 			return CFrame.new(pos or root.Position) * CFrame.fromOrientation(rot.X, rot.Y, rot.Z);
 		elseif k == "Position" then
@@ -91,10 +91,17 @@ local function Assembly(root: BasePart): AssemblyProxy
 			ap.Enabled = true;
 			ao.Enabled = true;
 		elseif k == "Position" then
-			ap.Position = t == "Vector3" and v or t == "CFrame" and v.Position;
+			ap.Position = if t == "Vector3" then v else v.Position;
 			ap.Enabled = true;
 		elseif k == "Orientation" then
-			ao.CFrame = t == "CFrame" and v or t == "Vector3" and v;
+			if t == "CFrame" then
+				ao.CFrame = v;
+			else
+				local rot = math.pi / 180 * v;
+				
+				ao.CFrame = CFrame.fromOrientation(rot.X, rot.Y, rot.Z);
+			end
+			
 			ao.Enabled = true;
 		end
 	end
