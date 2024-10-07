@@ -13,6 +13,26 @@ if not _G.AssemblyRegistry then
 	_G.AssemblyRegistry = setmetatable({}, table.freeze({__mode = "k"}));
 end
 
+local defaultAssemblyProperties = table.freeze({
+	attachment = {
+		Name = "Assembly";
+	}::Attachment;
+	alignPosition = {
+		Enabled = false;
+		RigidityEnabled = true;
+		Mode = Enum.PositionAlignmentMode.OneAttachment;
+		--MaxForce = math.huge;
+		--Responsiveness = 200;
+	}::AlignPosition;
+	alignOrientation = {
+		Enabled = false;
+		RigidityEnabled = true;
+		Mode = Enum.OrientationAlignmentMode.OneAttachment;
+		--MaxTorque = math.huge;
+		--Responsiveness = 200;
+	}::AlignOrientation;
+});
+
 local function Assembly(root: BasePart): AssemblyProxy
 	for k, v in next, _G.AssemblyRegistry do
 		if v ~= root then continue end
@@ -45,22 +65,27 @@ local function Assembly(root: BasePart): AssemblyProxy
 	
 	local a0 = Instance.new("Attachment");
 	
-	a0.Name = "Assembly";
+	for k, v in defaultAssemblyProperties.attachment do
+		a0[k] = v;
+	end
+	
 	a0.Parent = root;
 	
 	local ap = Instance.new("AlignPosition");
 	
-	ap.Enabled = false;
-	ap.RigidityEnabled = true;
-	ap.Mode = Enum.PositionAlignmentMode.OneAttachment;
+	for k, v in defaultAssemblyProperties.alignPosition do
+		ap[k] = v;
+	end
+	
 	ap.Attachment0 = a0;
 	ap.Parent = a0;
 	
 	local ao = Instance.new("AlignOrientation");
 	
-	ao.Enabled = false;
-	ao.RigidityEnabled = true;
-	ao.Mode = Enum.OrientationAlignmentMode.OneAttachment;
+	for k, v in defaultAssemblyProperties.alignOrientation do
+		ao[k] = v;
+	end
+	
 	ao.Attachment0 = a0;
 	ao.Parent = a0;
 	
