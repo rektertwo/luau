@@ -102,7 +102,9 @@ local function Assembly(root: BasePart, safe: boolean?): AssemblyProxy
 	function mt.__newindex(_, k, v)
 		local t = typeof(v);
 		
-		if t ~= "CFrame" and t ~= "Vector3" then return end
+		if t ~= "CFrame" and t ~= "Vector3" then
+			return;
+		end
 		
 		if k == "CFrame" then
 			if t == "CFrame" then
