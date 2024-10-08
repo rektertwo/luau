@@ -9,8 +9,12 @@ export type AssemblyProxy = {
 	Drop: (self: AssemblyProxy) -> ();
 }
 
-if not _G.AssemblyRegistry then
-	_G.AssemblyRegistry = setmetatable({}, table.freeze({__mode = "k"}));
+if not _G.safeAssemblyRegistry then
+	_G.safeAssemblyRegistry = {};
+end
+
+if not _G.unsafeAssemblyRegistry then
+	_G.unsafeAssemblyRegistry = setmetatable({}, table.freeze({__mode = "k"}));
 end
 
 local defaultAssemblyProperties = table.freeze({
@@ -33,8 +37,10 @@ local defaultAssemblyProperties = table.freeze({
 	}::AlignOrientation;
 });
 
-local function Assembly(root: BasePart): AssemblyProxy
-	for k, v in next, _G.AssemblyRegistry do
+local function Assembly(root: BasePart, safe: boolean): AssemblyProxy
+	local reg = if safe then _G.safeAssemblyRegistry else _G.unsafeAssemblyRegistry;
+	
+	for k, v in reg do
 		if v ~= root then continue end
 		
 		return k;
@@ -42,7 +48,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 	
 	local ud = newproxy(true);
 	
-	_G.AssemblyRegistry[ud] = root;
+	reg[ud] = root;
 	
 	local mt = getmetatable(ud);
 	local pos, rot;
@@ -131,7 +137,7 @@ local function Assembly(root: BasePart): AssemblyProxy
 	
 	function mt:Drop()
 		mt = nil;
-		_G.AssemblyRegistry[self] = nil;
+		reg[self] = nil;
 		self = nil;
 		a0:Destroy();
 		a0 = nil;
