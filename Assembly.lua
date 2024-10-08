@@ -37,7 +37,7 @@ local defaultAssemblyProperties = table.freeze({
 	}::AlignOrientation;
 });
 
-local function Assembly(root: BasePart, safe: boolean): AssemblyProxy
+local function Assembly(root: BasePart, safe: boolean?): AssemblyProxy
 	local reg = if safe then _G.safeAssemblyRegistry else _G.unsafeAssemblyRegistry;
 	
 	for k, v in reg do
