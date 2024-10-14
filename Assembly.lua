@@ -1,4 +1,4 @@
---optimize 2
+--!optimize 2
 export type AssemblyProxy = {
 	BasePart: BasePart;
 	Attachment: Attachment;
